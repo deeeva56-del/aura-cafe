@@ -1,0 +1,883 @@
+app/page.jsx 'use client';
+
+import React, { useState, useEffect } from 'react';
+import { ChevronDown, Search, ShoppingCart, Calendar, Clock, MapPin, Phone, Mail, Instagram, Facebook, Twitter, Star, Menu, X, Heart } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+
+export default function AuraCafe() {
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [activeCategory, setActiveCategory] = useState('Coffee');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [cartCount, setCartCount] = useState(0);
+  const [activeReview, setActiveReview] = useState(0);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      setScrollProgress(scrollPercent);
+      setShowBackToTop(scrollTop > 400);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const menuData = {
+    Coffee: [
+      { id: 1, name: 'Espresso', desc: 'Rich, bold single-origin', price: 7000, image: 'https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=500&h=500&fit=crop', time: '2 min', cal: '45' },
+      { id: 2, name: 'Cappuccino', desc: 'Smooth espresso with velvety foam', price: 8500, image: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=500&h=500&fit=crop', time: '3 min', cal: '120' },
+      { id: 3, name: 'Caramel Latte', desc: 'Sweet caramel with steamed milk', price: 9000, image: 'https://images.unsplash.com/photo-1517668808822-9ebb02ae2a0e?w=500&h=500&fit=crop', time: '3 min', cal: '180' },
+      { id: 4, name: 'Signature Aura Latte', desc: 'House blend with vanilla & cinnamon', price: 12000, image: 'https://images.unsplash.com/photo-1514432324607-2e467f4af445?w=500&h=500&fit=crop', time: '4 min', cal: '200' },
+    ],
+    Tea: [
+      { id: 5, name: 'Earl Grey', desc: 'Premium loose leaf bergamot', price: 6000, image: 'https://images.unsplash.com/photo-1597318972012-80302a46dcc3?w=500&h=500&fit=crop', time: '3 min', cal: '0' },
+      { id: 6, name: 'Matcha Latte', desc: 'Ceremonial grade whisked matcha', price: 9500, image: 'https://images.unsplash.com/photo-1516432162488-80e8ad60ddeb?w=500&h=500&fit=crop', time: '4 min', cal: '80' },
+    ],
+    Breakfast: [
+      { id: 7, name: 'Breakfast Combo', desc: 'Eggs, toast, bacon, fresh juice', price: 15000, image: 'https://images.unsplash.com/photo-1567521464027-f127ff144326?w=500&h=500&fit=crop', time: '8 min', cal: '650' },
+      { id: 8, name: 'Avocado Toast', desc: 'Sourdough, avocado, poached egg', price: 11000, image: 'https://images.unsplash.com/photo-1493857671505-72967e2e2760?w=500&h=500&fit=crop', time: '6 min', cal: '420' },
+    ],
+    Brunch: [
+      { id: 9, name: 'Belgian Waffles', desc: 'Fresh berries, whipped cream, honey', price: 11000, image: 'https://images.unsplash.com/photo-1567521464027-f127ff144326?w=500&h=500&fit=crop', time: '7 min', cal: '580' },
+      { id: 10, name: 'Grilled Salmon', desc: 'Lemon butter, roasted vegetables', price: 20000, image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=500&h=500&fit=crop', time: '12 min', cal: '480' },
+    ],
+    Desserts: [
+      { id: 11, name: 'Chocolate Lava Cake', desc: 'Warm center, vanilla ice cream', price: 12500, image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=500&h=500&fit=crop', time: '5 min', cal: '520' },
+      { id: 12, name: 'Cheesecake', desc: 'New York style, berry compote', price: 9000, image: 'https://images.unsplash.com/photo-1533134242443-742dd7dfc022?w=500&h=500&fit=crop', time: '0 min', cal: '420' },
+    ],
+  };
+
+  const filteredMenu = searchQuery
+    ? Object.values(menuData).flat().filter(item => 
+        item.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : menuData[activeCategory] || [];
+
+  const reviews = [
+    {
+      name: 'Sarah O.',
+      rating: 5,
+      text: 'The ambience alone deserves five stars. The coffee was unforgettable. I\'ve already recommended Aura to all my friends.'
+    },
+    {
+      name: 'Marcus T.',
+      rating: 5,
+      text: 'My new favorite café. The staff is incredibly welcoming and the food is consistently excellent.'
+    },
+    {
+      name: 'Chioma A.',
+      rating: 5,
+      text: 'Perfect for business meetings. The WiFi is reliable, the space is quiet but not lonely, and the coffee keeps you coming back.'
+    },
+  ];
+
+  const gallery = [
+    { image: 'https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=600&h=600&fit=crop', span: 'lg:col-span-2 lg:row-span-2' },
+    { image: 'https://images.unsplash.com/photo-1514432324607-2e467f4af445?w=500&h=500&fit=crop', span: '' },
+    { image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=500&h=500&fit=crop', span: '' },
+    { image: 'https://images.unsplash.com/photo-1493857671505-72967e2e2760?w=600&h=500&fit=crop', span: 'lg:col-span-2' },
+    { image: 'https://images.unsplash.com/photo-1495521821757-a1efb6729352?w=500&h=500&fit=crop', span: '' },
+    { image: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=500&h=600&fit=crop', span: 'lg:row-span-2' }
+  ];
+
+  const FloatingBean = ({ delay, x, y }) => (
+    <motion.div
+      className="absolute text-2xl pointer-events-none"
+      animate={{
+        x: [x, x + 20, x - 20, x],
+        y: [y, y - 30, y - 20, y],
+        rotate: [0, 360],
+        opacity: [0.3, 0.8, 0.3]
+      }}
+      transition={{
+        duration: 4,
+        delay,
+        repeat: Infinity,
+        ease: 'easeInOut'
+      }}
+    >
+      ☕
+    </motion.div>
+  );
+
+  const fadeUp = {
+    initial: { opacity: 0, y: 20 },
+    whileInView: { opacity: 1, y: 0 },
+    transition: { duration: 0.8 }
+  };
+
+  return (
+    <div className="bg-[#181512] text-white overflow-hidden">
+      {/* Scroll Progress */}
+      <motion.div 
+        className="fixed top-0 left-0 h-1 bg-gradient-to-r from-[#C89B5A] to-[#9CC5B5] z-50"
+        style={{ width: `${scrollProgress}%` }}
+      />
+
+      {/* Navigation */}
+      <motion.nav 
+        className="fixed w-full z-40 transition-all duration-300"
+        style={{ 
+          background: scrollProgress > 5 
+            ? 'rgba(24, 21, 18, 0.95)'
+            : 'transparent'
+        }}
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+          <motion.div 
+            className="text-2xl font-bold tracking-wider"
+            style={{ fontFamily: 'Cormorant Garamond' }}
+          >
+            AURA CAFÉ
+          </motion.div>
+
+          <div className="hidden md:flex gap-8 items-center">
+            {['About', 'Menu', 'Gallery', 'Reviews', 'Contact'].map((item) => (
+              <motion.a
+                key={item}
+                href={`#${item.toLowerCase()}`}
+                className="text-sm tracking-widest hover:text-[#C89B5A] transition-colors uppercase"
+                whileHover={{ y: -2 }}
+              >
+                {item}
+              </motion.a>
+            ))}
+          </div>
+
+          <div className="hidden md:flex gap-4 items-center">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              className="px-6 py-2 bg-[#9CC5B5] text-[#181512] rounded-full text-sm font-medium hover:bg-[#C89B5A] transition-colors"
+              style={{ fontFamily: 'Manrope' }}
+            >
+              Reserve a Table
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              className="relative"
+            >
+              <ShoppingCart size={24} />
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-[#C89B5A] text-[#181512] text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
+            </motion.button>
+          </div>
+
+          <div className="md:hidden flex gap-4">
+            <motion.button
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              whileHover={{ scale: 1.1 }}
+            >
+              {showMobileMenu ? <X size={24} /> : <Menu size={24} />}
+            </motion.button>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {showMobileMenu && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden border-t border-[#3D2B1F]"
+            >
+              <div className="px-6 py-4 flex flex-col gap-4">
+                {['About', 'Menu', 'Gallery', 'Reviews', 'Contact'].map((item) => (
+                  <a key={item} href={`#${item.toLowerCase()}`} className="text-sm uppercase">
+                    {item}
+                  </a>
+                ))}
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  className="w-full px-6 py-2 bg-[#9CC5B5] text-[#181512] rounded-full text-sm font-medium"
+                >
+                  Reserve a Table
+                </motion.button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.nav>
+
+      {/* Hero Section */}
+      <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+        <FloatingBean delay={0} x={-150} y={-100} />
+        <FloatingBean delay={1} x={150} y={-80} />
+        <FloatingBean delay={2} x={-100} y={200} />
+        <FloatingBean delay={1.5} x={200} y={150} />
+
+        <div className="absolute inset-0 z-0">
+          <img
+            src="https://images.unsplash.com/photo-1514432324607-2e467f4af445?w=1200&h=1200&fit=crop"
+            alt="Coffee"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#181512] via-[#181512]/60 to-transparent" />
+        </div>
+
+        <div className="relative z-10 max-w-4xl px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.2 }}
+          >
+            <h1 
+              className="text-6xl md:text-8xl font-bold mb-6 leading-tight"
+              style={{ fontFamily: 'Cormorant Garamond' }}
+            >
+              More Than Coffee.
+              <br />
+              <span className="text-[#C89B5A]">It's an Experience.</span>
+            </h1>
+          </motion.div>
+
+          <motion.p
+            className="text-xl md:text-2xl mb-8 max-w-2xl leading-relaxed opacity-90"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.4 }}
+          >
+            Step into Aura Café, where handcrafted coffee, gourmet dining, and unforgettable moments come together in a beautifully designed space.
+          </motion.p>
+
+          <motion.div
+            className="flex flex-col sm:flex-row gap-4 mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.6 }}
+          >
+            <motion.button
+              whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(200, 155, 90, 0.3)' }}
+              whileTap={{ scale: 0.95 }}
+              className="px-8 py-4 bg-[#C89B5A] text-[#181512] rounded-lg font-semibold tracking-wide hover:bg-[#9CC5B5] transition-colors"
+              style={{ fontFamily: 'Manrope' }}
+            >
+              Reserve Your Table
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              className="px-8 py-4 border-2 border-[#C89B5A] rounded-lg font-semibold tracking-wide hover:bg-[#C89B5A] hover:text-[#181512] transition-colors"
+              style={{ fontFamily: 'Manrope' }}
+            >
+              Order Now
+            </motion.button>
+          </motion.div>
+
+          <motion.div
+            className="flex items-center gap-3"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.8 }}
+          >
+            <div className="flex gap-1">
+              {Array(5).fill(0).map((_, i) => (
+                <Star key={i} size={20} fill="#C89B5A" stroke="#C89B5A" />
+              ))}
+            </div>
+            <p className="text-sm">Rated 4.9/5 by hundreds of happy guests</p>
+          </motion.div>
+        </div>
+
+        <motion.div
+          className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10"
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          <ChevronDown size={32} />
+        </motion.div>
+      </section>
+
+      {/* Feature Strip */}
+      <section className="py-16 px-6 bg-[#3D2B1F] border-y border-[#5C4332]">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6">
+          {[
+            { icon: '☕', title: 'Freshly Roasted Beans', desc: 'Small-batch daily' },
+            { icon: '🥐', title: 'Fresh Artisan Pastries', desc: 'House-baked daily' },
+            { icon: '🍽️', title: 'Signature Dining', desc: 'Chef-curated dishes' },
+            { icon: '📶', title: 'Free WiFi & Workspace', desc: 'Perfect for remote work' }
+          ].map((item, idx) => (
+            <motion.div
+              key={idx}
+              className="text-center"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.1 }}
+              viewport={{ once: true }}
+            >
+              <div className="text-4xl mb-3">{item.icon}</div>
+              <h3 className="font-bold mb-2" style={{ fontFamily: 'Cormorant Garamond' }}>
+                {item.title}
+              </h3>
+              <p className="text-sm opacity-70">{item.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Menu Section */}
+      <section id="menu" className="py-24 px-6">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            className="text-center mb-16"
+            {...fadeUp}
+          >
+            <p className="text-[#C89B5A] text-sm tracking-[0.3em] uppercase mb-4">Crafted To Be Remembered</p>
+            <h2 
+              className="text-6xl md:text-7xl font-bold mb-6"
+              style={{ fontFamily: 'Cormorant Garamond' }}
+            >
+              Signature Menu
+            </h2>
+            <p className="text-lg opacity-70 max-w-2xl mx-auto">
+              Every dish is carefully prepared using premium ingredients, delivering flavors that stay with you long after your last bite.
+            </p>
+          </motion.div>
+
+          {/* Search Bar */}
+          <motion.div
+            className="mb-8 max-w-2xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#C89B5A]" size={20} />
+              <input
+                type="text"
+                placeholder="Search menu..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-12 pr-4 py-3 bg-[#3D2B1F] border border-[#5C4332] rounded-lg focus:outline-none focus:border-[#C89B5A] transition-colors text-white"
+              />
+            </div>
+          </motion.div>
+
+          {/* Category Filter */}
+          {!searchQuery && (
+            <motion.div
+              className="flex gap-3 mb-12 overflow-x-auto pb-4 justify-center flex-wrap"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+            >
+              {Object.keys(menuData).map((category) => (
+                <motion.button
+                  key={category}
+                  onClick={() => setActiveCategory(category)}
+                  whileHover={{ scale: 1.05 }}
+                  className={`px-6 py-2 rounded-full font-medium transition-all whitespace-nowrap ${
+                    activeCategory === category
+                      ? 'bg-[#C89B5A] text-[#181512]'
+                      : 'border border-[#5C4332] hover:border-[#C89B5A]'
+                  }`}
+                  style={{ fontFamily: 'Manrope' }}
+                >
+                  {category}
+                </motion.button>
+              ))}
+            </motion.div>
+          )}
+
+          {/* Menu Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <AnimatePresence mode="wait">
+              {filteredMenu.map((item, idx) => (
+                <motion.div
+                  key={item.id}
+                  className="group cursor-pointer"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  transition={{ delay: idx * 0.05 }}
+                  whileHover={{ y: -8 }}
+                >
+                  <div className="relative overflow-hidden rounded-lg mb-4 h-64">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-4">
+                      <motion.button
+                        whileHover={{ scale: 1.2 }}
+                        className="self-end"
+                      >
+                        <Heart size={24} className="text-[#C89B5A]" />
+                      </motion.button>
+                      <div>
+                        <p className="text-sm mb-2">⏱️ {item.time} | 🔥 {item.cal} cal</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 
+                      className="text-xl font-bold mb-2"
+                      style={{ fontFamily: 'Cormorant Garamond' }}
+                    >
+                      {item.name}
+                    </h3>
+                    <p className="text-sm opacity-70 mb-3">{item.desc}</p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-[#C89B5A] font-bold text-lg">₦{item.price.toLocaleString()}</p>
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setCartCount(cartCount + 1)}
+                        className="p-2 bg-[#9CC5B5] text-[#181512] rounded-lg hover:bg-[#C89B5A] transition-colors"
+                      >
+                        <ShoppingCart size={18} />
+                      </motion.button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        </div>
+      </section>
+
+      {/* About Section */}
+      <section id="about" className="py-24 px-6 bg-gradient-to-b from-[#3D2B1F] to-[#181512]">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          <motion.div
+            initial={{ opacity: 0, x: -40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="rounded-lg overflow-hidden h-96"
+          >
+            <img
+              src="https://images.unsplash.com/photo-1493857671505-72967e2e2760?w=600&h=600&fit=crop"
+              alt="Café"
+              className="w-full h-full object-cover"
+            />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: 40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <p className="text-[#C89B5A] text-sm tracking-[0.3em] uppercase mb-4">Our Story</p>
+            <h2 
+              className="text-5xl md:text-6xl font-bold mb-6"
+              style={{ fontFamily: 'Cormorant Garamond' }}
+            >
+              Every Great Conversation Begins With Great Coffee.
+            </h2>
+            <p className="text-lg leading-relaxed opacity-80">
+              Aura Café was created for people who appreciate life's finer moments. From perfectly brewed specialty coffee to chef-crafted meals, every detail is designed to make your visit memorable. Whether you're meeting friends, working remotely, celebrating milestones, or simply taking a quiet moment for yourself, Aura Café offers a warm, elegant atmosphere where exceptional food meets meaningful experiences.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Why Choose Us - Bento Grid */}
+      <section className="py-24 px-6">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            className="text-center mb-16"
+            {...fadeUp}
+          >
+            <h2 
+              className="text-6xl md:text-7xl font-bold"
+              style={{ fontFamily: 'Cormorant Garamond' }}
+            >
+              Why Choose Aura
+            </h2>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {[
+              { title: 'Premium Coffee', image: 'https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=600&h=600&fit=crop', desc: 'Luxury flat lay of freshly roasted beans' },
+              { title: 'Chef-Curated Meals', image: 'https://images.unsplash.com/photo-1567521464027-f127ff144326?w=600&h=600&fit=crop', desc: 'Elegant gourmet breakfast with fresh ingredients' },
+              { title: 'Luxury Interior', image: 'https://images.unsplash.com/photo-1495521821757-a1efb6729352?w=600&h=600&fit=crop', desc: 'Minimal modern design with Scandinavian luxury' },
+              { title: 'Perfect For Every Occasion', image: 'https://images.unsplash.com/photo-1514432324607-2e467f4af445?w=600&h=600&fit=crop', desc: 'Cozy ambiance for every celebration' },
+            ].map((item, idx) => (
+              <motion.div
+                key={idx}
+                className="group cursor-pointer h-80 rounded-lg overflow-hidden relative"
+                whileHover={{ scale: 1.02 }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.1 }}
+                viewport={{ once: true }}
+              >
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-6">
+                  <h3 
+                    className="text-2xl font-bold mb-2"
+                    style={{ fontFamily: 'Cormorant Garamond' }}
+                  >
+                    {item.title}
+                  </h3>
+                  <p className="text-sm opacity-80">{item.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Gallery */}
+      <section id="gallery" className="py-24 px-6 bg-[#3D2B1F]">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            className="text-center mb-16"
+            {...fadeUp}
+          >
+            <h2 
+              className="text-6xl md:text-7xl font-bold"
+              style={{ fontFamily: 'Cormorant Garamond' }}
+            >
+              Gallery
+            </h2>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[300px]">
+            {gallery.map((item, idx) => (
+              <motion.div
+                key={idx}
+                className={`rounded-lg overflow-hidden group cursor-pointer relative ${item.span}`}
+                whileHover={{ scale: 1.02 }}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ delay: idx * 0.08 }}
+                viewport={{ once: true }}
+              >
+                <img
+                  src={item.image}
+                  alt={`Gallery ${idx}`}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-30 transition-opacity" />
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Reviews */}
+      <section id="reviews" className="py-24 px-6">
+        <div className="max-w-5xl mx-auto">
+          <motion.div
+            className="text-center mb-16"
+            {...fadeUp}
+          >
+            <h2 
+              className="text-6xl md:text-7xl font-bold mb-6"
+              style={{ fontFamily: 'Cormorant Garamond' }}
+            >
+              What Guests Say
+            </h2>
+          </motion.div>
+
+          <div className="relative">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeReview}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5 }}
+                className="p-8 md:p-12 rounded-lg border border-[#5C4332] text-center"
+              >
+                <div className="flex justify-center gap-1 mb-6">
+                  {Array(reviews[activeReview].rating).fill(0).map((_, i) => (
+                    <Star key={i} size={24} fill="#C89B5A" stroke="#C89B5A" />
+                  ))}
+                </div>
+                <p className="text-2xl md:text-3xl mb-8 leading-relaxed italic">
+                  "{reviews[activeReview].text}"
+                </p>
+                <p className="text-lg font-bold" style={{ fontFamily: 'Cormorant Garamond' }}>
+                  {reviews[activeReview].name}
+                </p>
+              </motion.div>
+            </AnimatePresence>
+
+            <div className="flex justify-center gap-4 mt-8">
+              {reviews.map((_, idx) => (
+                <motion.button
+                  key={idx}
+                  onClick={() => setActiveReview(idx)}
+                  className={`w-3 h-3 rounded-full transition-all ${
+                    idx === activeReview ? 'bg-[#C89B5A] w-8' : 'bg-[#C89B5A] opacity-30'
+                  }`}
+                  whileHover={{ scale: 1.2 }}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Reservation */}
+      <section id="reservations" className="py-24 px-6 bg-gradient-to-r from-[#3D2B1F] to-[#5C4332]">
+        <div className="max-w-2xl mx-auto">
+          <motion.div
+            className="text-center mb-12"
+            {...fadeUp}
+          >
+            <h2 
+              className="text-6xl md:text-7xl font-bold mb-4"
+              style={{ fontFamily: 'Cormorant Garamond' }}
+            >
+              Reserve Your Table
+            </h2>
+          </motion.div>
+
+          <motion.div
+            className="p-8 rounded-lg border border-[#C89B5A] bg-[#181512]/50 backdrop-blur"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <form className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <motion.div whileHover={{ scale: 1.02 }}>
+                  <label className="block text-sm font-semibold mb-2 uppercase tracking-wider">Date</label>
+                  <input
+                    type="date"
+                    className="w-full px-4 py-3 rounded-lg bg-[#3D2B1F] border border-[#5C4332] focus:outline-none focus:border-[#C89B5A] transition-colors text-white"
+                  />
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.02 }}>
+                  <label className="block text-sm font-semibold mb-2 uppercase tracking-wider">Time</label>
+                  <input
+                    type="time"
+                    className="w-full px-4 py-3 rounded-lg bg-[#3D2B1F] border border-[#5C4332] focus:outline-none focus:border-[#C89B5A] transition-colors text-white"
+                  />
+                </motion.div>
+              </div>
+
+              <motion.div whileHover={{ scale: 1.02 }}>
+                <label className="block text-sm font-semibold mb-2 uppercase tracking-wider">Guests</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="12"
+                  className="w-full px-4 py-3 rounded-lg bg-[#3D2B1F] border border-[#5C4332] focus:outline-none focus:border-[#C89B5A] transition-colors text-white"
+                />
+              </motion.div>
+
+              <motion.div whileHover={{ scale: 1.02 }}>
+                <label className="block text-sm font-semibold mb-2 uppercase tracking-wider">Occasion</label>
+                <select className="w-full px-4 py-3 rounded-lg bg-[#3D2B1F] border border-[#5C4332] focus:outline-none focus:border-[#C89B5A] transition-colors text-white">
+                  <option>Birthday</option>
+                  <option>Business Meeting</option>
+                  <option>Date Night</option>
+                  <option>Anniversary</option>
+                  <option>Family Dinner</option>
+                </select>
+              </motion.div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <motion.div whileHover={{ scale: 1.02 }}>
+                  <label className="block text-sm font-semibold mb-2 uppercase tracking-wider">Name</label>
+                  <input
+                    type="text"
+                    className="w-full px-4 py-3 rounded-lg bg-[#3D2B1F] border border-[#5C4332] focus:outline-none focus:border-[#C89B5A] transition-colors text-white"
+                  />
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.02 }}>
+                  <label className="block text-sm font-semibold mb-2 uppercase tracking-wider">Email</label>
+                  <input
+                    type="email"
+                    className="w-full px-4 py-3 rounded-lg bg-[#3D2B1F] border border-[#5C4332] focus:outline-none focus:border-[#C89B5A] transition-colors text-white"
+                  />
+                </motion.div>
+              </div>
+
+              <motion.button
+                type="submit"
+                whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(200, 155, 90, 0.3)' }}
+                whileTap={{ scale: 0.95 }}
+                className="w-full py-4 bg-[#C89B5A] text-[#181512] rounded-lg font-semibold tracking-wider uppercase hover:bg-[#9CC5B5] transition-colors"
+                style={{ fontFamily: 'Manrope' }}
+              >
+                Reserve My Table
+              </motion.button>
+            </form>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Contact */}
+      <section id="contact" className="py-24 px-6 bg-[#3D2B1F]">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <motion.div
+              className="rounded-lg overflow-hidden h-96"
+              initial={{ opacity: 0, x: -40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+            >
+              <img
+                src="https://images.unsplash.com/photo-1495521821757-a1efb6729352?w=600&h=600&fit=crop"
+                alt="Café"
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+            >
+              <h2 
+                className="text-5xl md:text-6xl font-bold mb-8"
+                style={{ fontFamily: 'Cormorant Garamond' }}
+              >
+                Visit Us
+              </h2>
+
+              <div className="space-y-6">
+                <div className="flex gap-4 items-start">
+                  <MapPin className="text-[#C89B5A] mt-1 flex-shrink-0" size={24} />
+                  <div>
+                    <p className="font-semibold mb-1">Address</p>
+                    <p className="opacity-70">127 Artisan Lane, Upscale District, Lagos, Nigeria</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4 items-start">
+                  <Phone className="text-[#C89B5A] mt-1 flex-shrink-0" size={24} />
+                  <div>
+                    <p className="font-semibold mb-1">Phone</p>
+                    <p className="opacity-70">+234 (701) 234-5678</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4 items-start">
+                  <Mail className="text-[#C89B5A] mt-1 flex-shrink-0" size={24} />
+                  <div>
+                    <p className="font-semibold mb-1">Email</p>
+                    <p className="opacity-70">hello@auracafe.com</p>
+                  </div>
+                </div>
+
+                <div className="pt-6 border-t border-[#5C4332]">
+                  <p className="font-semibold mb-4">Hours</p>
+                  <div className="grid grid-cols-2 gap-4 text-sm opacity-70">
+                    <div>
+                      <p className="font-medium mb-2">Mon–Fri</p>
+                      <p>7:00 AM – 10:00 PM</p>
+                    </div>
+                    <div>
+                      <p className="font-medium mb-2">Sat–Sun</p>
+                      <p>8:00 AM – 11:00 PM</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="py-16 px-6 border-t border-[#5C4332] bg-[#181512]">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+            <div>
+              <p className="text-2xl font-bold mb-4" style={{ fontFamily: 'Cormorant Garamond' }}>
+                AURA CAFÉ
+              </p>
+              <p className="opacity-70 text-sm">Coffee. Cuisine. Conversations.</p>
+            </div>
+
+            <div>
+              <p className="font-semibold mb-4 uppercase tracking-wider text-sm">Quick Links</p>
+              <ul className="space-y-2 text-sm opacity-70">
+                {['Menu', 'Reservations', 'Gallery', 'Contact'].map(link => (
+                  <li key={link}><a href={`#${link.toLowerCase()}`} className="hover:text-[#C89B5A] transition-colors">{link}</a></li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <p className="font-semibold mb-4 uppercase tracking-wider text-sm">Follow</p>
+              <div className="flex gap-4">
+                {[Instagram, Facebook, Twitter].map((Icon, idx) => (
+                  <motion.a
+                    key={idx}
+                    href="#"
+                    whileHover={{ scale: 1.2 }}
+                    className="text-[#C89B5A] hover:opacity-70 transition-opacity"
+                  >
+                    <Icon size={20} />
+                  </motion.a>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <p className="font-semibold mb-4 uppercase tracking-wider text-sm">Newsletter</p>
+              <div className="flex">
+                <input
+                  type="email"
+                  placeholder="Your email"
+                  className="flex-1 px-4 py-2 rounded-l-lg focus:outline-none text-[#181512]"
+                />
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  className="px-4 py-2 bg-[#C89B5A] text-[#181512] rounded-r-lg hover:bg-[#9CC5B5] transition-colors"
+                >
+                  →
+                </motion.button>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t border-[#5C4332] pt-8 flex flex-col md:flex-row justify-between items-center opacity-70 text-sm">
+            <p>&copy; 2024 Aura Café. All rights reserved.</p>
+            <div className="flex gap-6 mt-4 md:mt-0">
+              <a href="#" className="hover:text-[#C89B5A] transition-colors">Privacy</a>
+              <a href="#" className="hover:text-[#C89B5A] transition-colors">Terms</a>
+            </div>
+          </div>
+        </div>
+      </footer>
+
+      {/* Back to Top */}
+      <AnimatePresence>
+        {showBackToTop && (
+          <motion.button
+            onClick={scrollToTop}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0 }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            className="fixed bottom-8 right-8 z-40 w-12 h-12 rounded-full bg-[#C89B5A] text-[#181512] flex items-center justify-center hover:bg-[#9CC5B5] transition-colors"
+          >
+            ↑
+          </motion.button>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
